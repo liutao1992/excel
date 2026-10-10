@@ -248,10 +248,14 @@ public final class ExcelExportUtil {
                 }
 
                 Map<Integer, Field> columnToField = new HashMap<>();
+                Set<Field> mappedFields = new HashSet<>();
                 for (int columnIndex = 0; columnIndex < headerRow.getLastCellNum(); columnIndex++) {
                     String header = getCellAsString(headerRow.getCell(columnIndex)).trim();
                     Field field = headerToField.get(header);
                     if (field != null) {
+                        if (!mappedFields.add(field)) {
+                            throw new IllegalArgumentException("Excel 表头重复: " + header);
+                        }
                         field.setAccessible(true);
                         columnToField.put(columnIndex, field);
                     }
@@ -484,7 +488,14 @@ public final class ExcelExportUtil {
     }
 
     private static boolean isExcelDateCell(Cell cell) {
-        return cell != null && cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell);
+        if (cell == null) {
+            return false;
+        }
+        CellType cellType = cell.getCellType();
+        boolean numericValue = cellType == CellType.NUMERIC
+                || (cellType == CellType.FORMULA
+                && cell.getCachedFormulaResultType() == CellType.NUMERIC);
+        return numericValue && DateUtil.isCellDateFormatted(cell);
     }
 
     private static boolean parseBoolean(String value) {
