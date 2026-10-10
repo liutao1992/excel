@@ -126,11 +126,37 @@ public final class ExcelExportUtil {
             cell.setCellValue("");
             return;
         }
-        if (!(rawValue instanceof Number)) {
-            throw new IllegalArgumentException("百分比字段必须是数值类型: " + field.getName());
+        if (rawValue instanceof Number) {
+            double numericValue = ((Number) rawValue).doubleValue();
+            if (!Double.isFinite(numericValue)) {
+                throw new IllegalArgumentException("百分比字段值超出 Excel 数值范围: " + field.getName());
+            }
+            cell.setCellValue(numericValue);
+            return;
+        }
+        if (!(rawValue instanceof String)) {
+            throw new IllegalArgumentException("百分比字段必须是数值类型或数字字符串: " + field.getName());
         }
 
-        double numericValue = ((Number) rawValue).doubleValue();
+        String textValue = ((String) rawValue).trim();
+        if (textValue.isEmpty()) {
+            cell.setCellValue("");
+            return;
+        }
+        boolean percentLiteral = textValue.endsWith("%");
+        String numericText = percentLiteral
+                ? textValue.substring(0, textValue.length() - 1).trim()
+                : textValue;
+        BigDecimal decimalValue;
+        try {
+            decimalValue = new BigDecimal(numericText);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("百分比字段必须是有效数字或百分比字符串: " + field.getName(), e);
+        }
+        if (percentLiteral) {
+            decimalValue = decimalValue.movePointLeft(2);
+        }
+        double numericValue = decimalValue.doubleValue();
         if (!Double.isFinite(numericValue)) {
             throw new IllegalArgumentException("百分比字段值超出 Excel 数值范围: " + field.getName());
         }

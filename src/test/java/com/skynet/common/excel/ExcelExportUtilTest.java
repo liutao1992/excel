@@ -108,11 +108,11 @@ class ExcelExportUtilTest {
     }
 
     @Test
-    void rejectsEmptyExportsAndNonNumericPercentFields() {
+    void rejectsEmptyExportsAndInvalidPercentStrings() {
         assertThrows(IllegalArgumentException.class,
                 () -> ExcelExportUtil.exportToExcel(List.of(), "empty", new ByteArrayOutputStream()));
         assertThrows(RuntimeException.class,
-                () -> ExcelExportUtil.exportToExcel(List.of(new InvalidPercentRow("12%")),
+                () -> ExcelExportUtil.exportToExcel(List.of(new InvalidPercentRow("not-a-number")),
                         "invalid", new ByteArrayOutputStream()));
     }
 

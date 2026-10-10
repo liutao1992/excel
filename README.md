@@ -20,6 +20,6 @@ mvn exec:java -Dexec.mainClass=com.skynet.common.excel.ExcelDemo
 
 - `@ExcelColumn`：表头名称、列顺序和列宽。
 - `@ExcelDateFormat`：日期导入和导出的格式，例如 `pattern = "yyyy-MM-dd HH:mm:ss"`。
-- `@PercentFormat`：以 Excel 百分比格式显示数值，字段按比例存储，例如 `0.125` 显示为 `12.50%`。
+- `@PercentFormat`：以 Excel 百分比格式显示数值，字段按比例存储，例如 `0.125` 显示为 `12.50%`。也支持字符串比例值（`"0.125"`）和带百分号的字符串（`"12.5%"`）。
 - `@DictFormat`：使用 `DictService` 将字典值和显示文本双向转换。
 - `@BoolFormat`：将布尔值显示为指定文本，并在导入时转换回来。
