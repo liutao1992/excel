@@ -5,7 +5,6 @@ import com.skynet.common.excel.annotation.DictFormat;
 import com.skynet.common.excel.annotation.ExcelColumn;
 import com.skynet.common.excel.annotation.ExcelDateFormat;
 import com.skynet.common.excel.annotation.PercentFormat;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -226,9 +225,6 @@ public final class ExcelExportUtil {
         }
 
         try {
-            // 防止压缩炸弹。应用可按文件来源和大小调整此阈值。
-            ZipSecureFile.setMinInflateRatio(0.001);
-
             try (Workbook workbook = WorkbookFactory.create(in)) {
                 if (sheetIndex >= workbook.getNumberOfSheets()) {
                     throw new IllegalArgumentException("Sheet 序号超出范围: " + sheetIndex);
